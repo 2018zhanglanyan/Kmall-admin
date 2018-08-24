@@ -1,69 +1,80 @@
-import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import React,{ Component } from 'react';
+import { connect } from 'react-redux'
+import { Form, Icon, Input, Button,message } from 'antd';
+
 import axios from 'axios';
-import './index.css';
+import { createActions } from './store';
+
+import './index.css'
+
 const FormItem = Form.Item;
 
-class Login extends Component{
+class NormalLoginForm extends Component{
 	constructor(props){
-		super(props)
+		super(props);
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.state = {
+			isFetching:false
+		}
 	}
-
   handleSubmit(e){
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      if (!err) {
-        // console.log('Received values of form: ', values);
-        axios({
-		  method: 'post',
-		  url: 'http://127.0.0.1:3000/admin/login',
-		  data: values
-		})
-		.then((result)=>{
-			console.log(result);
-		})
-		.catch((err)=>{
-			console.log(err);
-		})
-      }
+      this.props.handleLogin(values);
     });
   }
-  
+
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
-    	<div className="login">
+    	<div className='login'>
 	      <Form className="login-form">
 	        <FormItem>
-	          {getFieldDecorator('userName', {
-	            rules: [{ required: true, message: '请输入用户名!' },{pattern:/^[a-zA-Z]{3,6}$/,message:'用户名为三到六位'}],
+	          {getFieldDecorator('username', {
+	            rules: [{ required: true, message: '请输入用户名!' },{pattern:/^[a-z|\d]{3,6}$/,message:'用户名为3-6个字符'}],
 	          })(
 	            <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="用户名" />
 	          )}
 	        </FormItem>
 	        <FormItem>
 	          {getFieldDecorator('password', {
-	            rules: [{ required: true, message: '请输入密码!' },{pattern:/^[a-z]{3,6}$/,message:'密码为三到六位'}],
+	            rules: [{ required: true, message: '请输入密码!' },{pattern:/^[a-z|\d]{3,6}$/,message:'密码为3-6个字符'}],
 	          })(
 	            <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="密码" />
 	          )}
 	        </FormItem>
 	        <FormItem>
 	          <Button 
-	          type="primary" 
-	          onClick={ this.handleSubmit } 
-	          className="login-form-button"
-	          loading={true}
+	          	type="primary" 
+	          	onClick={this.handleSubmit} 
+	          	className="login-form-button"
+	          	loading={this.state.isFetching}
 	          >
-	            登陆
+	            登录
 	          </Button>
 	        </FormItem>
 	      </Form>
       </div>
     );
   }
-  
 }
 
-export default Form.create()(Login); 
+const Login = Form.create()(NormalLoginForm);
+
+
+const mapStateToProps = (state)=>{
+	return {
+		isFetching:state.get('login').get('isFetching')
+	}
+}
+
+const mapDispatchToProps = (dispatch)=>{
+	return{
+		handleLogin:(values)=>{
+			const action =createActions.GetInitDataActionFn(values);
+			dispatch(action);
+		}
+	}
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Login);
