@@ -1,7 +1,8 @@
-// import React, { Component } from 'react';
 import React, { Component } from 'react';
 import Login from 'pages/login';
 import Home from 'pages/home';
+import User from 'pages/user';
+import ErrorPage from 'common/error-page';
 import { getUsername  } from 'util';
 import {
   BrowserRouter as Router,
@@ -37,9 +38,12 @@ class App extends Component {
 		return (
 			<Router>
 				<div className="App">
-					<ProtectRoute exact path='/' component={ Home } />
-					<LoginRouter  path='/login' component={ Login } />
-					
+					<Switch>
+						<ProtectRoute exact path='/' component={ Home } />
+						<LoginRouter  path='/login' component={ Login } />
+						<ProtectRoute  path='/user' component={ User } />
+						<Route component={ ErrorPage } />
+					</Switch>
 				</div>
 			</Router>
 		);
