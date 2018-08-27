@@ -13,16 +13,13 @@ class NormalLoginForm extends Component{
 	constructor(props){
 		super(props);
 		this.handleSubmit = this.handleSubmit.bind(this);
-		this.state = {
-			isFetching:false
-		}
 	}
-  handleSubmit(e){
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      this.props.handleLogin(values);
-    });
-  }
+	handleSubmit(e){
+		e.preventDefault();
+		this.props.form.validateFields((err, values) => {
+			this.props.handleLogin(values);
+		});
+	}
 
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -48,7 +45,7 @@ class NormalLoginForm extends Component{
 	          	type="primary" 
 	          	onClick={this.handleSubmit} 
 	          	className="login-form-button"
-	          	loading={this.state.isFetching}
+	          	loading={this.props.isFetching}
 	          >
 	            登录
 	          </Button>
@@ -64,6 +61,7 @@ const Login = Form.create()(NormalLoginForm);
 
 const mapStateToProps = (state)=>{
 	return {
+
 		isFetching:state.get('login').get('isFetching')
 	}
 }

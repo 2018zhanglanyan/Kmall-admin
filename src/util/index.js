@@ -1,17 +1,29 @@
 import axios from 'axios';
 
+
 export const request = (options)=>{
 	return new Promise((resolve,reject)=>{
-		axios({
+		const params = {
 			method: options.method || 'get',
 			url: options.url || '',
-			data: options.data || null
-		})
+			withCredentials: true
+		}
+		switch (params.method.toUpperCase()){
+			case 'GET':
+			case 'DELETE':
+				params.params = options.data;
+				break;
+			default:
+				params.data = options.data
+		}
+
+		axios(params)
 		.then(result=>{
 			let data = result.data;
 			if(data.code == 10){
-				reject(err);
+				removeUsername()
 				window.location.href = '/login';
+				reject(err);
 			}
 			resolve(data)
 

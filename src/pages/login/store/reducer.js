@@ -3,9 +3,8 @@ import * as types from './actionTypes.js';
 
 //用fromJS包装一个immutable对象
 const defaultState = fromJS({
-	isFetching:true
+	isFetching:false
 })
-
 export default (state=defaultState,action)=>{
 	if(action.type === types.LOGIN_REQUEST){
 		return state.set('isFetching',true)
