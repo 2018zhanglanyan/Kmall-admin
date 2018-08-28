@@ -3,6 +3,8 @@ import Layout from 'common/layout';
 import {connect} from 'react-redux';
 import { Breadcrumb,Form,Input,Select,Button } from 'antd'
 import * as createActions from './store/actionCreates.js'
+
+
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -11,6 +13,9 @@ class NormalLoginForm extends Component{
 	constructor(props){
 		super(props);
 		this.handleSubmit = this.handleSubmit.bind(this);
+	}
+	componentDidMount(){
+		this.props.getLevelOneCategories();
 	}
 	handleSubmit(e){
 		e.preventDefault();
@@ -65,20 +70,27 @@ class NormalLoginForm extends Component{
 				            <Input />
 				          )}
 				        </FormItem>
+
 				        <FormItem
 				          {...formItemLayout}
 				          label="分类列表"
 				        >
 				          {getFieldDecorator('pid', {
-				            rules: [ {
+				            rules: [{
 				              required: true, message: '选择分类名称!',
 				            }],
 				          })(
 				            <Select initialValue="0" style={{ width: 120 }}>
-						      <Option value="0">Jack</Option>
+						      <Option value="0">根分类</Option>
+						      {
+						      	this.props.levelOneCategories.map((category)=>{
+						      		return <Option key={ category.get('_id') } value={ category.get('_id') }>根分类/{ category.get('_id') }</Option>
+						      	})
+						      }
 						    </Select>
 				          )}
 				        </FormItem>
+
 				        <FormItem {...tailFormItemLayout}>
 				          <Button 
 				          	type="primary" 
@@ -98,7 +110,8 @@ class NormalLoginForm extends Component{
 
 const mapStateToProps = (state)=>{
 	return {
-		isAddFetching:state.get('category').get('isAddFetching')
+		isAddFetching:state.get('category').get('isAddFetching'),
+		levelOneCategories:state.get('category').get('levelOneCategories')
 	}
 }
 
@@ -106,8 +119,13 @@ const mapDispatchToProps = (dispatch)=>{
 	return{
 		handleAdd:(values)=>{
  			dispatch(createActions.GetAddAction(values));
+		},
+		getLevelOneCategories:()=>{
+			dispatch(createActions.getLevelOneCategories());
 		}
 	}
 }
+
 const CategoryAdd = Form.create()(NormalLoginForm);
+
 export default connect(mapStateToProps,mapDispatchToProps)(CategoryAdd);
