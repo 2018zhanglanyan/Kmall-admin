@@ -3,8 +3,6 @@ import Layout from 'common/layout';
 import {connect} from 'react-redux';
 import { Breadcrumb,Form,Input,Select,Button } from 'antd'
 import * as createActions from './store/actionCreates.js'
-
-
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -70,32 +68,31 @@ class NormalLoginForm extends Component{
 				            <Input />
 				          )}
 				        </FormItem>
-
 				        <FormItem
 				          {...formItemLayout}
 				          label="分类列表"
 				        >
 				          {getFieldDecorator('pid', {
-				            rules: [{
+				            rules: [ {
 				              required: true, message: '选择分类名称!',
 				            }],
 				          })(
-				            <Select initialValue="0" style={{ width: 120 }}>
+				            <Select initialValue="0" style={{ width: 300 }}>
 						      <Option value="0">根分类</Option>
 						      {
 						      	this.props.levelOneCategories.map((category)=>{
-						      		return <Option key={ category.get('_id') } value={ category.get('_id') }>根分类/{ category.get('_id') }</Option>
+						      		return  <Option key={category.get('_id')} value={category.get('_id')}>{category.get('name')}</Option>
 						      	})
+
 						      }
 						    </Select>
 				          )}
 				        </FormItem>
-
 				        <FormItem {...tailFormItemLayout}>
 				          <Button 
 				          	type="primary" 
 				          	onClick={ this.handleSubmit }
-				          	loading = {this.props.isFetching}
+				          	loading = {this.props.isAddFetching}
 				          >提交</Button>
 				        </FormItem>
 
@@ -118,14 +115,12 @@ const mapStateToProps = (state)=>{
 const mapDispatchToProps = (dispatch)=>{
 	return{
 		handleAdd:(values)=>{
- 			dispatch(createActions.GetAddAction(values));
+ 			dispatch(createActions.getAddAction(values));
 		},
 		getLevelOneCategories:()=>{
-			dispatch(createActions.getLevelOneCategories());
+			dispatch(createActions.getLevelOneCategoriesAction());
 		}
 	}
 }
-
 const CategoryAdd = Form.create()(NormalLoginForm);
-
 export default connect(mapStateToProps,mapDispatchToProps)(CategoryAdd);

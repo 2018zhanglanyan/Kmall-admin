@@ -4,7 +4,6 @@ import { Table,Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import * as createActions from './store/actionCreates.js';
 import moment from 'moment';
-
 import './index.css'
  
 

@@ -61,7 +61,6 @@ const Login = Form.create()(NormalLoginForm);
 
 const mapStateToProps = (state)=>{
 	return {
-
 		isFetching:state.get('login').get('isFetching')
 	}
 }

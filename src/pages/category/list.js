@@ -1,9 +1,13 @@
 import React,{ Component } from 'react';
 import Layout from 'common/layout'
 import { Link } from 'react-router-dom'
-import { connect } from 'react-redux';	
-import * as createActions from './store/actionCreates.js';
-import { Breadcrumb, Form, Table, Divider, Button, InputNumber, Modal, Input } from 'antd'
+import { Breadcrumb,Form,InputNumber,Select,Button,Table,Divider,Modal,Input } from 'antd'
+import { connect } from 'react-redux'
+import * as createActions from './store/actionCreates.js'
+
+
+
+
 
 class NormalCategoryList extends Component{
 
@@ -15,83 +19,93 @@ class NormalCategoryList extends Component{
 	}
 
 	componentDidMount(){
-		// 第一个参数是父类ID,第二个参数是页码
-		this.props.handlePage(this.state.pid,1)
+		//第一个参数是父级ID,第二个参数是页码
+		this.props.handlePage(this.state.pid,1);
 	}
 
-	componentDidUpdate(preProps,preState){
+	componentDidUpdate(preProps,PreState){
 		let oldPath = preProps.location.pathname;
 		let newPath = this.props.location.pathname;
-		if (oldPath != newPath) {
-			let newpid = this.props.match.params.pid || 0;
-			this.setState({
-				pid:newpid
+		if(oldPath!=newPath){
+			let newPid = this.props.match.params.pid || 0;
+			this.setState(
+				{pid:newPid
 			},()=>{
-				this.props.handlePage(newPath,1)
+				this.props.handlePage(newPid,1);
 			})
 		}
 	}
 
 	render(){
-		const pid = this.state.pid;
-
 		const columns = [{
-		  title: 'id',
-		  dataIndex: 'id',
-		  key: 'id',
-		},
-		{
-		  title: '分类名称',
-		  dataIndex: 'name',
-		  key: 'name',
-		},
-		{
-		  title: '排序',
-		  dataIndex: 'order',
-		  key: 'order',
-		  render:(text,record)=>(
-		  	<InputNumber defaultValue={record.order} />
-		  )
-		},
-		{
-		  title: '操作',
-		  key: 'action',
-		  render:(text,record)=>(
-		  	<span>
-		  		<a href="javascript:;">更新名称</a>
-		  		{
-		  			record.pid == 0
-		  			?(<span>
-		  				<Divider type="vertical" />
-		  				<Link to={"/category/"+record.id}>查看子分类</Link>
-		  			</span>)
-		  			:null
-		  		}
-		  		
-		  	</span>
-		  )
-		}];
-
+			  title: 'id',
+			  dataIndex: 'id',
+			  key: 'id',
+			},
+			{
+			  title: '分类名称',
+			  dataIndex: 'name',
+			  key: 'name',
+			},
+			{
+			  title: '排序',
+			  dataIndex: 'order',
+			  key: 'order',
+			  render:(text,record)=>(
+			  	<InputNumber defaultValue={record.order} />
+			  )
+			},
+			{
+			  title:'操作',
+			  key:'action',
+			  render:(text,record)=>(
+			  	<span>
+			  		<a
+			  		    href='jacascript:;'
+			  		    onClick={()=>{
+			  		    	this.props.showUpdateModal(record.id,record.name)
+			  		    }}
+			  		>
+			  		 	更新名称
+			  		</a>
+			  		{
+			  			record.pid == 0
+			  			?(
+			  				<span>
+			  					<Divider type='vertical' />
+			  					<Link to={"/category/"+record.id}>查看子分类</Link>
+			  				</span>
+			  			)
+			  			:null
+			  		}
+			  	</span>
+			  )
+			}
+			
+		];
+		const pid = this.state.pid
 		const data = this.props.list.map((category)=>{
-			// console.log(user);
+			// console.log(user)
 			return {
 				key:category.get('_id'),
 				id:category.get('_id'),
 				name:category.get('name'),
 				order:category.get('order'),
-				pid:category.get('pid')
+				pid:category.get('pid'),
 			}
 		}).toJS();
 		return(
 			<Layout>
-				<Breadcrumb>
-					<Breadcrumb.Item>分类管理</Breadcrumb.Item>
-					<Breadcrumb.Item>分类列表</Breadcrumb.Item>
-				</Breadcrumb>
-				<div style={{ marginTop:10 }}>
-					<h4 style={{ float:"left" }}>父类ID:{pid}</h4>
-					<Link to="/category/add" className="clearfix">
-						<Button type="primary" style={{ float:"right" }}>新增分类</Button>
+				<div>
+					<Breadcrumb>
+						<Breadcrumb.Item>分类管理</Breadcrumb.Item>
+						<Breadcrumb.Item>分类列表</Breadcrumb.Item>
+					</Breadcrumb>
+					<div style={{ marginTop:20,float:'left' }} >
+						<h4>父类ID:{pid}</h4>
+					</div>
+					<Link to="/category/add" className='clearfix'>
+						<Button type="primary" style={{ float:'right' }}>新增分类</Button>
 					</Link>
 					<Table 
 						dataSource={data} 
@@ -105,7 +119,7 @@ class NormalCategoryList extends Component{
 							}
 						}
 						onChange = {(pagination)=>{
-							this.props.handlePage(pagination.current);
+							this.props.handleList(pid,pagination.current);
 						}}
 						loading = {
 							{
@@ -124,10 +138,13 @@ class NormalCategoryList extends Component{
 			        </Modal>
 				</div>
 			</Layout>
+			
+					
 		)
 	}
 
 }
+
 
 const mapStateToProps = (state)=>{
 	return {
@@ -136,14 +153,14 @@ const mapStateToProps = (state)=>{
 		total:state.get('category').get('total'),
 		pageSize:state.get('category').get('pageSize'),
 		list:state.get('category').get('list'),
-		updateModalVisible:state.get('category').get('updateModalVisible')
+		updateModalVisible:state.get('category').get('updateModalVisible'),
 	}
 }
 
 const mapDispatchToProps = (dispatch)=>{
 	return{
 		handlePage:(pid,page)=>{
-			dispatch(createActions.getPageAction(pid,page));
+ 			dispatch(createActions.getPageAction(pid,page));
 		},
 		showUpdateModal:(updateId,updateName)=>{
 			dispatch(createActions.getShowUpdateModalAction(updateId,updateName));
@@ -154,10 +171,9 @@ const mapDispatchToProps = (dispatch)=>{
 		handleCancelName:()=>{
 			dispatch(createActions.getHideUpdateModalAction());
 		}
-
+		
 	}
 }
-
 const CategoryList = Form.create()(NormalCategoryList);
-
 export default connect(mapStateToProps,mapDispatchToProps)(CategoryList);
+

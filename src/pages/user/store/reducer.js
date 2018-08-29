@@ -4,7 +4,7 @@ import { fromJS } from 'immutable';
 const defaultState = fromJS({
 	isFetching:false,
 	current:1,
-	total:200,
+	total:300,
 	list:[],
 	pageSize:10
 })

@@ -3,8 +3,7 @@ import { message } from 'antd';
 import { ADD_CATEGORY,GET_CATEGORIES } from 'api';
 import * as types from './actionTypes.js';
 
-
-// 生成action
+//生成action
 export const getAddRequstAction = ()=>{
 	return{
 		type:types.ADD_REQUEST
@@ -37,7 +36,6 @@ export const getSetPageAction = (payload)=>{
 		payload
 	}
 }
-
 export const getShowUpdateModalAction = (updateId,updateName)=>{
 	return{
 		type:types.SHOW_UPDATE_MODAL,
@@ -61,7 +59,6 @@ export const getChangeUpdateModalAction = (updateId,updateName)=>{
 		}
 	}
 }
-
 //方法
 export const getAddAction = (values)=>{
 	return (dispatch)=>{

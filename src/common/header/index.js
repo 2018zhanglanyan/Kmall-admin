@@ -1,11 +1,10 @@
 import { Layout,Menu, Dropdown, Icon } from 'antd';
 import React,{ Component } from 'react';
+import './index.css';
 import { request,getUsername,removeUsername } from 'util';
 import { ADMIN_LOGOUT } from 'api';
-
-import './index.css';
-
 const { Header } = Layout;
+
 
 
 class MyHeader extends Component{
