@@ -39,10 +39,10 @@ class MyHeader extends Component{
     return(
     	<div>
     		<Header className="header">
-	          <div className="logo">KMALL</div>
+	          <div className="logo">SHOPMALL</div>
 	          <Dropdown overlay={menu} trigger={['click']}>
 					    <a className="ant-dropdown-link" href="#">
-					      { getUsername() } <Icon type="down" />
+					      { getUsername() } <Icon type="down" className="ant-dropdown-link-icon"/>
 					    </a>
 					  </Dropdown>
 	      </Header>

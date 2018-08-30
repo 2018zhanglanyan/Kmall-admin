@@ -34,6 +34,17 @@ class NormalCategoryList extends Component{
 				this.props.handlePage(newPid,1);
 			})
 		}
+		/*
+		//更改过分类名称后执行
+		if(oldPath!=newPath){
+			let newPid = this.props.match.params.pid || 0;
+			this.setState(
+				{pid:newPid
+			},()=>{
+				this.props.handlePage(newPid,1);
+			})
+		}
+		*/
 	}
 
 	render(){
@@ -51,9 +62,14 @@ class NormalCategoryList extends Component{
 			  title: '排序',
 			  dataIndex: 'order',
 			  key: 'order',
-			  render:(text,record)=>(
-			  	<InputNumber defaultValue={record.order} />
-			  )
+			  render:(text,record)=>{
+			  	return <InputNumber
+				  	  	defaultValue={record.order} 
+				  	 	onBlur={(e)=>{
+		        	  		this.props.handleOrder(pid,record.id,e.target.value)
+		        	 	}} 
+			  	/>
+			  }
 			},
 			{
 			  title:'操作',
@@ -73,7 +89,7 @@ class NormalCategoryList extends Component{
 			  			?(
 			  				<span>
 			  					<Divider type='vertical' />
-			  					<Link to={"/category/"+record.id}>查看子分类</Link>
+			  					<Link to={"/category/"+record.id}>查看分类</Link>
 			  				</span>
 			  			)
 			  			:null
@@ -119,7 +135,7 @@ class NormalCategoryList extends Component{
 							}
 						}
 						onChange = {(pagination)=>{
-							this.props.handleList(pid,pagination.current);
+							this.props.handlePage(pid,pagination.current);
 						}}
 						loading = {
 							{
@@ -131,10 +147,17 @@ class NormalCategoryList extends Component{
 					<Modal
 			          title="修改分类名称"
 			          visible={this.props.updateModalVisible}
-			          onOk={this.props.handleUpdateName}
+			          onOk={()=>{this.props.handleUpdateName(pid)}}
 			          onCancel={this.props.handleCancelName}
+			          cancelText='取消'
+			          okText='确定'
 			        >
-			          <Input placeholder={this.updateName} />
+			          <Input 
+			          	  value={this.props.updateName}
+			        	  onChange={(e)=>{
+			        	  	this.props.handleChangeName(e.target.value)
+			        	  }}
+			          />
 			        </Modal>
 				</div>
 			</Layout>
@@ -154,10 +177,11 @@ const mapStateToProps = (state)=>{
 		pageSize:state.get('category').get('pageSize'),
 		list:state.get('category').get('list'),
 		updateModalVisible:state.get('category').get('updateModalVisible'),
+		updateName:state.get('category').get('updateName'),
 	}
 }
-
 const mapDispatchToProps = (dispatch)=>{
+
 	return{
 		handlePage:(pid,page)=>{
  			dispatch(createActions.getPageAction(pid,page));
@@ -165,11 +189,17 @@ const mapDispatchToProps = (dispatch)=>{
 		showUpdateModal:(updateId,updateName)=>{
 			dispatch(createActions.getShowUpdateModalAction(updateId,updateName));
 		},
-		handleUpdateName:(updateId,updateName)=>{
-			dispatch(createActions.getChangeUpdateModalAction(updateId,updateName));
+		handleUpdateName:(pid)=>{
+			dispatch(createActions.getChangeInputValueAction(pid));
 		},
 		handleCancelName:()=>{
 			dispatch(createActions.getHideUpdateModalAction());
+		},
+		handleChangeName:(newName)=>{
+			dispatch(createActions.getChangeNameAction(newName));
+		},
+		handleOrder:(pid,id,newOrder)=>{			
+			dispatch(createActions.getChangeOrderAction(pid,id,newOrder));
 		}
 		
 	}
