@@ -5,10 +5,8 @@ import { Breadcrumb,Form,Input,Select,Button,InputNumber } from 'antd'
 import * as createActions from './store/actionCreates.js'
 import CategorySelector from './category-select.js'
 import PicturesWall from 'common/upload-image/upload-image.js'
-import { UPLOAD_PRODUCT_IMAGE } from 'api';
-import { Simditor } from 'simditor'
-import 'simditor/styles/simditor.css'
-
+import { UPLOAD_PRODUCT_IMAGE,UPLOAD_PRODUCT_DETAIL_IMAGE } from 'api';
+import RichEditor from 'common/rich-editor';
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -19,14 +17,12 @@ class NormalProductSave extends Component{
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 	componentDidMount(){
-		this.props.getLevelOneCategories();
+		
 	}
 	handleSubmit(e){
 		e.preventDefault();
 		this.props.form.validateFields((err,values) => {
-			if(!err){
-				this.props.handleAdd(values);
-			}
+			this.props.handleSave(err,values);
 		});
 	}
 	render(){
@@ -89,10 +85,13 @@ class NormalProductSave extends Component{
 				        <FormItem
 				          {...formItemLayout}
 				          label="所属分类"
+				          required={true}
+				          validateStatus={this.props.categoryIdValidateStatus}
+				          help={this.props.categoryIdHelp}
 				        >
 				          <CategorySelector 
-				          		getCategoryId={(pid,id)=>{
-				          			
+				          		getCategoryId={(parentCategoryId,categoryId)=>{
+				          			this.props.handleCategory(parentCategoryId,categoryId)
 				          		}}
 				          />
 				        </FormItem>
@@ -139,7 +138,7 @@ class NormalProductSave extends Component{
 				        		imageMax={3}
 				        		getFileList={
 				        			(fileList)=>{
-				        				console.log(fileList)
+				        				this.props.handleImage(fileList)
 				        			}
 				        		}
 				        	/>
@@ -149,7 +148,12 @@ class NormalProductSave extends Component{
 				          {...formItemLayout}
 				          label="商品详情"
 				        >
-				          
+				          <RichEditor 
+				          	action={UPLOAD_PRODUCT_DETAIL_IMAGE}
+				          	getRichEditorValue={(value)=>{
+				          		this.props.handleDetail(value)
+				          	}}
+				          />
 				        </FormItem>
 				        <FormItem {...tailFormItemLayout}>
 				          <Button 
@@ -170,19 +174,28 @@ class NormalProductSave extends Component{
 
 const mapStateToProps = (state)=>{
 	return {
-		isAddFetching:state.get('category').get('isAddFetching'),
-		levelOneCategories:state.get('category').get('levelOneCategories')
+		categoryIdValidateStatus:state.get('product').get('categoryIdValidateStatus'),
+		categoryIdHelp:state.get('product').get('categoryIdHelp'),
 	}
 }
 
 const mapDispatchToProps = (dispatch)=>{
 	return{
-		handleAdd:(values)=>{
- 			dispatch(createActions.getAddAction(values));
+		handleCategory:(parentCategoryId,categoryId)=>{
+			console.log(parentCategoryId,categoryId)
+			dispatch(createActions.getSetCategoryAction(parentCategoryId,categoryId));
 		},
-		getLevelOneCategories:()=>{
-			dispatch(createActions.getLevelOneCategoriesAction());
+		handleImage:(fileList)=>{
+			dispatch(createActions.getSetImageAction(fileList));
+		},
+		handleDetail:(value)=>{
+			dispatch(createActions.getSetDetailAction(value));
+		},
+		handleSave:(err,values)=>{
+ 			dispatch(createActions.getSaveAction(err,values));
 		}
+
+		
 	}
 }
 const ProductSave = Form.create()(NormalProductSave);
