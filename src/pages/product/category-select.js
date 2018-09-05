@@ -24,13 +24,18 @@ class CategorySelector extends Component{
 		this.loadLevelOneCategory()
 	}
 	static getDerivedStateFromProps(props,state){
-		const levelOneCategoyIdChanged = props.parentCategoryId !== state.levelOneCategoyId
-		const levelTwoCategoyIdChanged = props.categoryId !== state.levelTwoCategoyId
+		const levelOneCategoyIdChanged = props.parentCategoryId !== state.levelOneCategoryId
+		const levelTwoCategoyIdChanged = props.categoryId !== state.levelTwoCategoryId
+		//新建时不更新
+		if(state.levelOneCategoryId && !props.parentCategoryId && !props.categoryId){
+			return null
+		}
+
 		//如果分类id没有改变，就不更新
 		if(!levelOneCategoyIdChanged && !levelTwoCategoyIdChanged){
 			return null;
 		}
-
+		//编辑时已经更新过了就不更新state
 		if(state.isChanged){
 			return null;
 		}
@@ -136,8 +141,11 @@ class CategorySelector extends Component{
 	    return (
 	      <div>
 	        <Select 
+	       		defaultValue={levelOneCategoryId}
+				value={levelOneCategoryId}
 	        	style={{ width: 200,marginRight:20 }} 
 	        	onChange={this.handleLevelOneChange}
+	        	disabled={this.props.boolean}
 	        >
 	          { levelOneOptions	}
 	        </Select>
@@ -147,6 +155,7 @@ class CategorySelector extends Component{
 					defaultValue={levelTwoCategoryId}
 					value={levelTwoCategoryId}
 					style={{ width: 200 }} 
+					disabled={this.props.boolean}
 					onChange={this.handleLevelTwoChange}>
 						{levelTwoOptions}
 				</Select>
@@ -156,5 +165,7 @@ class CategorySelector extends Component{
 	    );
   	}
 }
+
+
 
 export default CategorySelector;
