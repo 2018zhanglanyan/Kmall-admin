@@ -32,10 +32,6 @@ export const getSetDetailAction = (value)=>{
 		}
 	}
 }
-export const getProductDetailAction = ()=>{
-	
-}
-
 
 //生成action
 export const getSaveRequstAction = ()=>{
@@ -72,6 +68,13 @@ export const setCategoryError = (payload)=>{
 	}
 }
 
+export const setImagesError = (payload)=>{
+	return {
+		type:types.SET_IMAGES_ERROR,
+		payload
+	}
+}
+
 export const setaLLDetailAction = (payload)=>{
 	return {
 		type:types.GET_DETAIL_ALL,
@@ -95,8 +98,20 @@ export const getSaveAction = (err,values)=>{
 	return (dispatch,getState)=>{
 		const state=getState().get('product');
 		const categoryId=state.get('categoryId');
+		const filePath=state.get('filePath');
+		let hasError = false;
+
 		if(!categoryId){
 			dispatch(setCategoryError())
+			// return;
+			hasError = true;
+		}
+		if(!filePath){
+			dispatch(setImagesError())
+			// return;
+			hasError = true;
+		}
+		if(hasError){
 			return;
 		}
 		if(err){

@@ -9,6 +9,8 @@ const defaultState = fromJS({
 	value:'',
 	categoryIdHelp:'',
 	categoryIdValidateStatus:'',
+	imagesIdHelp:'',
+	imagesIdValidateStatus:'',
 	isAddFetching:false,
 	isPageFetching:false,
 	current:1,
@@ -33,7 +35,10 @@ export default (state=defaultState,action)=>{
 	}
 	if(action.type === types.SET_IMAGE){
 		return state.merge({
-			filePath:action.payload.filePath
+			filePath:action.payload.filePath,
+
+			imagesIdHelp:'',
+			imagesIdValidateStatus:'',
 		})
 	}
 	if(action.type === types.SET_DETAIL){
@@ -67,6 +72,12 @@ export default (state=defaultState,action)=>{
 		return state.merge({
 			categoryIdHelp:'请选择分类',
 			categoryIdValidateStatus:'error',
+		})
+	}
+	if (action.type === types.SET_IMAGES_ERROR){
+		return state.merge({
+			imagesIdHelp:'请选择图片',
+			imagesIdValidateStatus:'error',
 		})
 	}
 	
